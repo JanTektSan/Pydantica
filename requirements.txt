@@ -1,0 +1,3 @@
+pydantic-ai
+rich
+pydantic
