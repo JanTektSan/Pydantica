@@ -1,4 +1,4 @@
-# medit
+# Pydantica
 
 A command-line tool that uses AI to help you generate and execute ImageMagick and FFmpeg 
 commands using natural language instructions. This is an example CLI application with agentic workflow.
