@@ -1,6 +1,9 @@
 import asyncio
 import streamlit as st
-from crud_pg import ask
+from crud_pg import ask, create_notes_table
+
+# Ensure the notes table exists
+create_notes_table()
 
 st.set_page_config(page_title="Note Manager", layout="centered")
 st.title("My Note Dashboard")

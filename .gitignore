@@ -1,2 +1,4 @@
 myvenv
 .env
+__pycache__
+output

@@ -1,14 +1,18 @@
 import psycopg2
 import asyncpg
+import os
 from typing import Optional, List
 
 from dataclasses import dataclass
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
-from database import DatabaseConn
 from pydantic_ai.models.openai import OpenAIModel
 
-DB_DSN = "database-connection-string"
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DB_DSN = os.getenv("DB_DSN")
 
 def create_notes_table():
     """
@@ -111,7 +115,6 @@ class DatabaseConn:
         finally:
             await conn.close()
 
-OPENAI_API_KEY = "enter-your-openai-api-key-here"
 @dataclass
 class NoteIntent:
     action: str
@@ -125,7 +128,7 @@ class NoteResponse(BaseModel):
     note: Optional[dict] = None
     titles: Optional[List[str]] = None
 # 1. Agent for parsing the user's intent
-intent_model = OpenAIModel('gpt-4o-mini', api_key=OPENAI_API_KEY)
+intent_model = OpenAIModel('gpt-4o-mini')
 intent_agent = Agent(
     intent_model,
     result_type=NoteIntent,
@@ -136,16 +139,18 @@ intent_agent = Agent(
     )
 )
 # 2. Agent for executing the identified action
-action_model = OpenAIModel('gpt-4o-mini', api_key=OPENAI_API_KEY)
+action_model = OpenAIModel('gpt-4o')
 action_agent = Agent(
     action_model,
     deps_type=NoteDependencies,
     result_type=NoteResponse,
     system_prompt=(
-        "Based on the identified user intent, carry out the requested action on the note storage. "
-        "Actions can include: 'create' (add note), 'retrieve' (get note), or 'list' (list all notes)."
+        "You are an action executor for a note management system. Your job is to perform the requested action based on the user's intent. "
+        "There are three actions: 'create' (to add a new note), 'retrieve' (to get an existing note), and 'list' (to show all note titles). "
+        "For a 'retrieve' action, first check the db and capture the best matched title for user's intent and based on the title, and retrieve."
     )
 )
+
 # Tools for action_agent
 @action_agent.tool
 async def create_note_tool(ctx: RunContext[NoteDependencies], title: str, text: str) -> NoteResponse:
