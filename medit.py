@@ -7,6 +7,9 @@ from rich.console import Console
 from rich.prompt import Prompt
 import subprocess
 import shlex
+from dotenv import load_dotenv
+
+load_dotenv()
 
 console = Console()
 
@@ -157,7 +160,7 @@ combining_agent = Agent(
 
 # Executing Agent
 executing_agent = Agent(
-    "anthropic:claude-3-5-sonnet-latest",
+    "gemini-2.0-flash",
     deps_type=CommandDependencies,
     result_type=CommandResult,
     retries=3,
