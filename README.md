@@ -28,6 +28,7 @@ pip install -r requirements.txt
 Run the tool:
 ```bash
 python medit.py
+streamlit run app.py
 ```
 
 Available commands:
